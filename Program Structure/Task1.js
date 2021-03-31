@@ -14,7 +14,7 @@ It may be useful to know that you can find the length of a string by writing .le
 var abc = "abc";
 console.log(abc.length);
 // → 3
-*\
+*/
 
 function forLoop () {
   let line = '';
