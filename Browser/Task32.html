@@ -1,0 +1,25 @@
+<script>
+    function all(promises) {
+        return new Promise(function (success, fail) {
+            var allData = [];
+            var counter = promises.length;
+
+            // If array of promises is empty return it right away
+            if (!counter) { success(promises); }
+
+            // "For" cycle with "var i" is not applicable here
+            promises.forEach(function (promise, i) {
+                promise
+                    // When promise succeeds
+                    .then(function (data) {
+                        allData[i] = data;
+                        counter -= 1;
+                        // When all promises succeed
+                        if (!counter) { success(allData); }
+                    })
+                    // When promise fails
+                    .catch(error => fail(error));
+            });
+        });
+    }
+</script>
