@@ -1,0 +1,44 @@
+<canvas width="600" height="300"></canvas>
+<script>
+    console.log('a');
+    // Data set
+    var results = [
+        {name: "Satisfied", count: 1043, color: "lightblue"},
+        {name: "Neutral", count: 563, color: "lightgreen"},
+        {name: "Unsatisfied", count: 510, color: "pink"},
+        {name: "No comment", count: 175, color: "silver"}
+    ];
+    var cx = document.querySelector("canvas").getContext("2d");
+    var total = results.reduce(function(sum, choice) {
+        return sum + choice.count;
+    }, 0);
+    // Start at the top
+    var currentAngle = -0.5 * Math.PI;
+    var centerX = 300, centerY = 150;
+
+    results.forEach(function(result) {
+        var sliceAngle = (result.count / total) * 2 * Math.PI;
+        var angle = currentAngle + (sliceAngle / 2);
+        // X and Y coordinates of text
+        var x = Math.cos(angle) * 120 + centerX
+        var y = Math.sin(angle) * 120 + centerY
+        cx.font = "20px serif"
+        cx.fillStyle = "black"
+        cx.textAlign = "end"
+        // If angle is from 90 deg and to 270 deg draw text to left
+        if (angle > Math.PI / 2 && angle < Math.PI * 1.5) {
+            cx.textAlign = "end"
+        } else cx.textAlign = "start"
+        cx.fillText(result.name, x, y);
+
+        cx.beginPath();
+        // center = 300, 150, radius=100
+        // from current angle, clockwise by slice's angle
+        cx.arc(centerX, centerY, 100,
+            currentAngle, currentAngle + sliceAngle);
+        currentAngle += sliceAngle;
+        cx.lineTo(centerX, centerY);
+        cx.fillStyle = result.color;
+        cx.fill();
+    });
+</script>
