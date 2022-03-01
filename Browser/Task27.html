@@ -1,0 +1,35 @@
+<!doctype html>
+
+<div id="wrapper">
+  <div data-tabname="one">Tab one</div>
+  <div data-tabname="two">Tab two</div>
+  <div data-tabname="three">Tab three</div>
+</div>
+<script>
+  function asTabs(node) {
+    var tabs = node.querySelectorAll('[data-tabname]');
+    tabs.forEach(function (tab, i) {
+      tab.style.position = "absolute"
+      tab.style.display = "none"
+      var button = document.createElement("button")
+      button.id = i;
+      button.textContent = tab.getAttribute("data-tabname")
+      node.insertBefore(button, tab)
+    })
+     var buttons = document.querySelectorAll("button")
+    buttons.forEach(function (btn) {
+      btn.addEventListener('click', function (event){
+        buttons.forEach(function (_btn) {
+          _btn.style.backgroundColor = ""
+        })
+        tabs.forEach(function (tab) {
+          tab.style.display = "none"
+        })
+        tabs[event.target.id].style.display = ""
+        btn.style.backgroundColor = "lightGreen"
+        });
+    })
+    tabs[0].style.display = "";
+  }
+  asTabs(document.querySelector("#wrapper"));
+</script>
