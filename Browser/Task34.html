@@ -1,0 +1,36 @@
+<input type="text" id="field">
+<div id="suggestions" style="cursor: pointer"></div>
+
+<script>
+  // Builds up an array with global variable names, like
+  // 'alert', 'document', and 'scrollTo'
+  var terms = [];
+  for (var name in window) { terms.push(name); }
+
+  var input = document.querySelector('#field');
+  var suggestions = document.querySelector('#suggestions');
+
+  input.addEventListener('input', function () {
+      // Cleaning suggestions area before starting
+      suggestions.innerHTML = '';
+    if (input.value) {
+      var matches = [];
+      // Collecting all current matches
+      terms.forEach(function (term) {
+        if (term.startsWith(input.value)) { matches.push(term); }
+      });
+      // Creating node in suggestions node for each match
+      matches.forEach(function (match) {
+        var hint = document.createElement('div');
+        hint.textContent = match;
+        // Replacing input area by click
+        hint.addEventListener('click', function () {
+          input.value = hint.textContent;
+            // Cleaning suggestions area after choosing a hint
+            suggestions.innerHTML = '';
+        });
+        suggestions.appendChild(hint);
+      });
+    }
+  });
+</script>
