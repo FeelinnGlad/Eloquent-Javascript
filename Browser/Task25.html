@@ -1,0 +1,11 @@
+<input type="text">
+<script>
+    var field = document.querySelector("input");
+    field.addEventListener("keydown", function (event) {
+        // If key code is 81, 87 or 88
+        if(/^8[178]$/.exec(event.keyCode.toString())) {
+            // Preventing default behaviour (outputting)
+            event.preventDefault();
+        }
+    })
+</script>
