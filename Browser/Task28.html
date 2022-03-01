@@ -1,0 +1,93 @@
+<canvas width="1600" height="1200"></canvas>
+<script>
+    var cx = document.querySelector('canvas').getContext('2d');
+    function trapezoid(x, y, height) {
+        cx.beginPath();
+        cx.moveTo(x, y);
+        // Short base
+        cx.lineTo(x + height, y);
+        // Right rib
+        cx.lineTo(x + height * 1.5, y + height);
+        // Wide base
+        cx.lineTo(x - height * 0.5, y + height);
+        // Closing shape with right rib
+        cx.closePath();
+        cx.stroke();
+    }
+
+    function diamond(x, y, size, color) {
+        // Saving context before rotation
+        cx.save();
+        cx.translate(160, -70);
+        cx.rotate(Math.PI / 4);
+        cx.fillStyle = color;
+        // Drawing the square
+        cx.fillRect(x, y, size, size);
+        // Loading last saved context
+        cx.restore();
+    }
+
+    function zigzag(x, y, dots, size) {
+        cx.beginPath();
+        cx.moveTo(x, y);
+        // Building zigzags in amount of given dots
+        for (var i = 1; i < dots; i++) {
+            var delta = size / dots * i;
+            // If even
+            i % 2
+                // Draw line right or left
+                ? cx.lineTo(x + size, y + delta)
+                : cx.lineTo(x, y + delta);
+        }
+        cx.stroke();
+    }
+
+    function spiral(x, y, segments) {
+        cx.beginPath();
+        cx.moveTo(x, y);
+        var angle = 0;
+        var delta = Math.pow(Math.PI, 2) / segments;
+        // Building segments
+        for (var i = 0; i < segments; i++) {
+            var dots = [];
+            angle = angle + delta;
+            // Storing dots for one cycle
+            dots[0] = Math.cos(angle);
+            dots[1] = Math.sin(angle);
+            angle = angle + delta;
+            dots[2] = Math.cos(angle);
+            dots[3] = Math.sin(angle);
+            dots = dots.map(function (value) {
+                    return (value * i) / 2;
+                }
+            );
+            cx.lineTo(x + dots[0], y + dots[1]);
+            cx.lineTo(x + dots[2], y + dots[3]);
+        }
+        cx.stroke();
+    }
+
+    function star(x, y, points, size, color) {
+        // Finding center of star
+        var xCenter = x + size / 2;
+        var yCenter = y + size / 2;
+        var delta = 2 * Math.PI / points;
+        var angle = 0;
+        cx.beginPath();
+        // Moving context to the first ray position
+        cx.moveTo(x + size, yCenter);
+        for (var i = 0; i < points; i++) {
+            angle = angle + delta;
+            cx.quadraticCurveTo(xCenter, yCenter, xCenter + Math.cos(angle) *
+                size / 2, yCenter + Math.sin(angle) * size / 2);
+        }
+        cx.fillStyle = color;
+        cx.fill();
+    }
+    // Functions calls
+    trapezoid(40, 60, 60);
+    diamond(110, 60, 70, 'red');
+    zigzag(260, 50, 13, 100);
+    spiral(430, 100, 100);
+    star(490, 50, 8, 100, 'orange');
+</script>
