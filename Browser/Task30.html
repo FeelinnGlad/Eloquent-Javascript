@@ -1,0 +1,47 @@
+<canvas width="400" height="400"></canvas>
+<script>
+    var cx = document.querySelector("canvas").getContext("2d");
+    // Animation update construction
+    var lastTime = null;
+    function frame(time) {
+        if (lastTime != null) {
+            updateAnimation();
+        }
+        lastTime = time;
+        requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+
+    var randomSign = Math.random() > 0.5 ? 1 : -1;
+    var angle = randomSign * Math.random() * Math.PI, baseX = 50, baseY = 50, width = 250, height = 250,
+        speed = 3.5, ballSize = 15, boxWidth = 4, x = baseX + (width / 2), y = baseY + (height / 2);
+    cx.lineWidth = boxWidth;
+    cx.strokeStyle = "black";
+    cx.strokeRect(baseX, baseY, width, height);
+    cx.moveTo(x, y)
+
+    function updateAnimation() {
+
+        if (Math.abs(Math.ceil(x)) >= baseX + width - ballSize - boxWidth) {
+            angle = Math.PI - angle
+        }
+        if (Math.abs(Math.ceil(y)) <= baseY + ballSize + boxWidth) {
+            angle = 2 * Math.PI - angle
+        }
+        if (Math.abs(Math.ceil(x)) <= baseX + ballSize + boxWidth) {
+            angle = Math.PI - angle
+        }
+        if (Math.abs(Math.ceil(y)) >= baseY + height - ballSize - boxWidth) {
+            angle = 2 * Math.PI - angle
+        }
+
+        x += speed * Math.cos(angle);
+        y += speed * Math.sin(angle);
+        cx.clearRect(baseX + boxWidth / 2, baseY + boxWidth / 2,
+             width - boxWidth, height - boxWidth);
+        cx.fillStyle = "lightGreen"
+        cx.beginPath()
+        cx.arc(x, y, ballSize, 0, 2 * Math.PI);
+        cx.fill();
+    }
+</script>
