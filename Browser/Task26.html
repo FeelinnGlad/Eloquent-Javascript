@@ -1,0 +1,29 @@
+<style>
+    .trail { /* className for the trail elements */
+        position: absolute;
+        height: 6px; width: 6px;
+        border-radius: 3px;
+        background: teal;
+    }
+    body {
+        height: 300px;
+    }
+</style>
+
+<script>
+    var temp = 0;
+    addEventListener("mousemove", function (event){
+        temp += 1;
+        if (document.body.getElementsByClassName('trail').length === 10) {
+            document.body.removeChild(document.getElementsByClassName('trail')[0]);
+        }
+        if (temp === 2) {
+            var dot = document.createElement('div');
+            dot.className = 'trail';
+            dot.style.left = event.pageX - dot.style.height + 'px';
+            dot.style.top = event.pageY - dot.style.width + 'px';
+            document.body.appendChild(dot);
+            temp = 0;
+        }
+    });
+</script>
