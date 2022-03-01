@@ -1,0 +1,192 @@
+<div id="grid"></div>
+<button id="next">Next generation</button>
+<script>
+    // Columns and rows amount
+    var height = 30, width = 30;
+
+    // Initialising HTML nodes
+    var $grid = document.querySelector('#grid');
+    var $nextGen = document.querySelector('#next');
+
+    // Adding extra auto-update button
+    var $autoUpdate = document.createElement('button');
+    $autoUpdate.textContent = 'Auto update';
+    $autoUpdate.id = 'au';
+    $nextGen.insertAdjacentHTML('afterEnd', $autoUpdate.outerHTML);
+    var items = document.body.getElementsByTagName('*');
+
+    // Button styles
+    for (var i = 1, length = items.length; i < length; i++) {
+        items[i].style.background = '#5d5d5d';
+        items[i].style.borderStyle = 'none';
+        items[i].style.padding = 0.5 + '%';
+        items[i].style.margin = 1 + '%';
+        items[i].style.fontFamily = 'Lucida Console';
+    }
+
+    // Grid style
+    document.body.style.background = '#1e1b1b';
+    document.body.style.color = '#dad2a1';
+
+    // Drawing initial empty grid
+    function drawGrid() {
+        for (var i = 0; i < height; i++) {
+            // Creating div row
+            $grid.appendChild(document.createElement('div'));
+            var $div = $grid.lastChild;
+            for (var j = 0; j < width; j++) {
+                // Filling row with checkboxes
+                $div.appendChild(document.createElement('input'));
+                $div.childNodes.forEach(function (checkbox) {
+                    // Checkboxes style
+                    checkbox.type = 'checkbox';
+                    checkbox.style.appearance = 'none';
+                    checkbox.style.width = 15 + 'px';
+                    checkbox.style.height = 15 + 'px';
+                    checkbox.style.background = '#2d2d2d';
+                    checkbox.style.margin = 0.1 + '%';
+                    // Interaction with checkbox
+                    checkbox.addEventListener('change',
+                        function (event) {
+                            event.target.checked
+                                // Checked
+                                ? event.target.style.background = '#dad2a1'
+                                // Unchecked
+                                : event.target.style.background = '#2d2d2d';
+                        });
+                });
+            }
+        }
+    }
+
+    // Creating 2D array of 0s and 1s
+    function buildRandomDataSet() {
+        // Initialising 2D array
+        var arr = Array.from(Array(width),
+            function () { return new Array(height); });
+
+        for (var i = 0; i < width; i++) {
+            for (var j = 0; j < height; j++) {
+                // Generates 0 over 1 with possibility of 75%
+                arr[i][j] = (Math.floor(Math.random() * 10) & 1) &
+                    (Math.floor(Math.random() * 10) & 1);
+            }
+        }
+        return arr;
+    }
+
+    drawGrid();
+    // Basic array
+    var arr = buildRandomDataSet();
+    firstLoad();
+
+    // Drawing grid after document completely loads
+    function firstLoad() {
+        window.addEventListener('load', function () {
+            for (var i = 0; i < height; i++) {
+                var $row = $grid.children[i];
+                for (var j = 0; j < width; j++) {
+                    // If element is 1 display it as checked
+                    if (arr[i][j]) {
+                        var $checkbox = $row.children[j];
+                        $checkbox.style.background = '#dad2a1';
+                        $checkbox.checked = true;
+                    }
+                }
+            }
+        });
+    }
+
+    // Updating grid based on passed array
+    function updateGrid(arr) {
+        for (var i = 0; i < height; i++) {
+            var $row = $grid.children[i];
+            for (var j = 0; j < width; j++) {
+                var $checkbox = $row.children[j];
+                // If element is 1
+                if (arr[i][j]) {
+                    $checkbox.style.background = '#dad2a1';
+                    $checkbox.checked = true;
+                } else { // If element is 0
+                    $checkbox.style.background = '#2d2d2d';
+                    $checkbox.checked = false;
+                }
+            }
+        }
+    }
+
+    // Getting array from current grid
+    function scanGrid() {
+        for (var i = 0; i < height; i++) {
+            var $row = $grid.children[i];
+            for (var j = 0; j < width; j++) {
+                var $checkbox = $row.children[j];
+                if ($checkbox.checked) { arr[i][j] = 1; } else { arr[i][j] = 0; }
+            }
+        }
+    }
+
+    // New 2D array to be displayed after updating
+    var next = Array.from(Array(width), function () {
+        return new Array(height);
+    });
+
+    // Next generation button logic
+    $nextGen.addEventListener('click', function () {
+        scanGrid();
+        buildNextGen();
+        updateGrid(next);
+    });
+
+    var inProcess = false;
+    // Auto updating button logic
+    document.querySelector('#au').addEventListener('click',
+        function () {
+                         function animate() {
+                scanGrid();
+                buildNextGen();
+                updateGrid(next);
+
+                setTimeout(function () {
+                    requestAnimationFrame(animate);
+                    // 10 FPS
+                }, 1000 / 10);
+            }
+            animate();
+        });
+
+    // Fill new array based on current one
+    function buildNextGen() {
+        for (var i = 0; i < height; i++) {
+            for (var j = 0; j < width; j++) {
+                var neighbors = countNeighbors(i, j);
+
+                // "Any dead cell with exactly 3 live neighbors
+                // becomes a live cell"
+                if (arr[i][j] === 0 && neighbors === 3) {
+                    next[i][j] = 1;
+                    // "Any live cell with <2 or >3 live neighbors dies"
+                } else if (arr[i][j] === 1 && (neighbors < 2 || neighbors > 3)) {
+                    next[i][j] = 0;
+                    // Any live cell with 2 or 3 live neighbors lives.
+                } else { next[i][j] = arr[i][j]; }
+            }
+        }
+
+        // Count cell's neighbors
+        function countNeighbors(x, y) {
+            var sum = 0;
+            for (var i = -1; i < 2; i++) {
+                for (var j = -1; j < 2; j++) {
+                    // The grid will act as enclosed space with no boundaries
+                    var col = (x + i + width) % width;
+                    var row = (y + j + height) % height;
+
+                    sum += arr[col][row];
+                }
+            }
+            sum -= arr[x][y];
+            return sum;
+        }
+    }
+</script>
