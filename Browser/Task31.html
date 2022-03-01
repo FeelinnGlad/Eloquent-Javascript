@@ -1,0 +1,20 @@
+<script>
+    function contentNegotiation() {
+        var req = new XMLHttpRequest();
+        // Header types
+        var types = ['text/plain', 'text/html', 'application/json',
+            'application/rainbows+unicorns'];
+        // By "load" event logging request info
+        req.addEventListener('load', function () {
+            console.log('Status:', req.status, req.responseType);
+            console.log('Content type:',
+                req.getResponseHeader('content-type'), '\n');
+        });
+        // Making requests using every header type
+        types.forEach(function (type) {
+            req.open('GET', 'https://eloquentjavascript.net/author', false);
+            req.setRequestHeader('Accept', type);
+            req.send(null);
+        });
+    }
+</script>
