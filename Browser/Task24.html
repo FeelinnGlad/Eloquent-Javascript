@@ -1,0 +1,27 @@
+<!doctype html>
+<body style="background: cadetblue"></body>
+<p style="text-align: center; background: azure">
+    <img src="file:///C:/users/Feel Good/projects/kmironenka-jses5/img/cat.png" id="cat" style="position: absolute">
+    <img src="file:///C:/users/Feel Good/projects/kmironenka-jses5/img/hat.png" id="hat" style="position: absolute">
+</p>
+<script>
+    var cat = document.querySelector("#cat");
+    var hat = document.querySelector("#hat");
+    // Current angle of the animation and last position time
+    var angle = 0, lastTime = 0;
+    function animate(time) {
+        if (lastTime != null) {
+            angle += (time - lastTime) * 0.001;
+        }
+        lastTime = time;
+        // Correcting absolute value positioning
+        cat.style.top = (Math.sin(angle) * 40) + 80 + "px";
+        cat.style.left = (Math.cos(angle + Math.PI) * 200) + 300 + "px";
+        // Making "y" angle to differ by Pi
+        // so that hat orbits the opposite way and puts on cat head
+        hat.style.top = (Math.sin(angle + Math.PI) * 100) + 100 + "px";
+        hat.style.left = (Math.cos(angle) * 200) + 300 + "px";
+        requestAnimationFrame(animate);
+    }
+    requestAnimationFrame(animate);
+</script>
